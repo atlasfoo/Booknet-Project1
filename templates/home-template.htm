@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="esz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{url_for('static', filename='css/bootstrap.min.css')}}" />
+    <link rel="stylesheet" href="{{url_for('static', filename='css/fontello.css')}}">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+    <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic:400,700" rel="stylesheet">
+    <style>
+        body{
+            font-family: 'Nanum Gothic', Arial, sans-serif;
+        }
+        @media screen and (max-width:576px){
+            #search-form input{
+                width: auto;
+            }
+        }
+    </style>
+    <title>BookNet</title>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+            <a href="#" class="navbar-brand">BookNet</a>
+            <button class="navbar-toggler navbar-toggler-left" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-label="Menu" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <section class="collapse navbar-collapse" id="main-menu">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                       <a href="#" class="nav-link dropdown-toggle" id="user-dp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-user"></i>{{user.usr}}</a>
+                       <div class="dropdown-menu" aria-labelledby="user-dp">
+                            <a href="#" class="dropdown-item">Profile</a>
+                            <a href="#" class="dropdown-item">Log Out</a>
+                       </div> 
+                    </li>
+                    <li class="nav item">
+                        <a href="#" class="nav-link">Home</a>
+                    </li>
+                    
+                </ul>
+                <form action="" class="form-inline" id="search-form">
+                    <input type="text" class="form-control mr-2" placeholder="Buscar Libro">
+                    <button type="submit" class="btn btn-sm btn-dark"><i class="icon-search"></i></button>
+                </form>
+            </section>
+        </nav>
+        <main class="mt-2">
+            {%block body%}
+            {%endblock%}
+        </main>
+    </div>
+</body>
+</html>

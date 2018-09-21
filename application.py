@@ -39,10 +39,11 @@ def home():
         return render_template("error.htm", message="Invalid username or password")
     #encrypting password with sha256
     pswd = util.encrypt(pswd)
-    if db.execute("SELECT * FROM users WHERE usr=:usr AND pswd=:pswd", {"usr":usr, "pswd":pswd}).rowcount != 1:
+    user=db.execute("SELECT * FROM users WHERE usr=:usr AND pswd=:pswd", {"usr":usr, "pswd":pswd}).fetchone()
+    if user is None:
         return render_template("error.htm", message="Invalid username or password")
-
-    return render_template("success.htm", message="The page is still developing")
+    session["user_id"]=user.id;
+    return render_template("home.htm", user=user)
 
 @app.route("/register")
 def register():
