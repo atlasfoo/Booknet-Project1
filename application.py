@@ -2,6 +2,8 @@
 
 import os
 
+import util
+
 from flask import Flask, session, render_template, request
 from flask_session import Session
 from sqlalchemy import create_engine
@@ -29,12 +31,37 @@ def index():
 
 @app.route("/home", methods=["POST"])
 def home():
-    return "Not implemented yet"
+    '''getting into homepage'''
+    #getting and verifying the form fields
+    usr = request.form.get("nametxt")
+    pswd = request.form.get("pswdtxt")
+    if usr == None or pswd == None:
+        return render_template("error.htm", message="Invalid username or password")
+    #encrypting password with sha256
+    pswd = util.encrypt(pswd)
+    if db.execute("SELECT * FROM users WHERE usr=:usr AND pswd=:pswd", {"usr":usr, "pswd":pswd}).rowcount != 1:
+        return render_template("error.htm", message="Invalid username or password")
+
+    return render_template("success.htm", message="The page is still developing")
 
 @app.route("/register")
 def register():
     return render_template("register.htm")
 
-@app.route("/registered")
+@app.route("/registered", methods=["POST"])
 def registered(): 
-    return "not implemented yet"
+    '''Putting new user into database'''
+    #getting and verifying the form fields 
+    usr=request.form.get("nametxt")
+    pswd=request.form.get("pswdtxt")
+    if usr == None or pswd == None:
+        return render_template("error.htm", message="Internal error on registration")
+    #encrypting password with sha256
+    pswd=util.encrypt(pswd)
+    #committing into table
+    db.execute("INSERT INTO users(usr, pswd) VALUES (:usr, :pswd)",
+    {"usr":usr, "pswd":pswd})
+    db.commit()
+
+    return render_template("success.htm", message="You're successfully registered")    
+    

@@ -21,4 +21,19 @@
             </div>
         </article>
     </section>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", () => {
+            //form verifier
+            document.querySelector("#newform").onsubmit = () => {
+                var nametxt = document.querySelector("#nametxt");
+                var pswdtxt = document.querySelector("#pswdtxt");
+                //if any of the fields is empty
+                if (nametxt.value === "" || pswdtxt.value === "") {
+                    alert("Please fill all the fields");
+                    return false;
+                }
+                return true;
+            }
+        });
+    </script>
 {%endblock%}
