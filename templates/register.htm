@@ -1,0 +1,43 @@
+{%extends "layout.htm"%}
+{%block title%}Registration{%endblock%}
+{%block body%}
+    <section class="row d-flex justify-content-center my-4">
+        <article class="col-12 col-lg-6 bg-gray">
+            <div class="text-center mb-4">
+                <h3>Register into BookNet</h3>
+            </div>
+            <form action="{{url_for('registered')}}" method="POST" id="newform">
+                <div class="form-group">
+                    <input type="text" name="nametxt" id="nametxt" placeholder="Your username" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="pswdtxt" id="pswdtxt" placeholder="Your password" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="cpswdtxt" id="cpswdtxt" placeholder="Confirm your password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-block btn-primary" id="submitbtn">Sign in</button>
+            </form>
+        </article>
+    </section>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", ()=>{ 
+            //form verifier
+            document.querySelector("#newform").onsubmit=() =>{
+                var nametxt = document.querySelector("#nametxt");
+                var pswdtxt = document.querySelector("#pswdtxt");
+                var cpswdtxt = document.querySelector("#cpswdtxt");
+                //if any of the fields is empty
+                if(nametxt.value === "" || pswdtxt.value === "" || cpswdtxt.value === ""){
+                    alert("Please fill all the fields");
+                    return false;
+                //if the password isn't properly confirmed 
+                }else if(pswdtxt.value != cpswdtxt.value){
+                    alert("The password isn't the same in the both fields");
+                    return false;
+                }
+                return true;
+            }
+        });
+    </script>
+{%endblock%}

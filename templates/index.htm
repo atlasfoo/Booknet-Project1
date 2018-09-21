@@ -1,0 +1,24 @@
+{% extends "layout.htm" %}
+{%block title%}BookNet{%endblock%}
+{%block body%}
+    <section class="row d-flex justify-content-center my-4">
+        <article class="col-12 col-lg-6 bg-gray">
+            <div class="text-center mb-2">
+                <h3>BookNet</h3>
+                <p class="text-muted">Welcome to Booknet, give your credentials to log in</p>
+            </div>
+            <form action="{{url_for('home')}}" method="POST">
+                <div class="form-group">
+                    <input type="text" name="nametxt" id="nametxt" placeholder="Username" class="form-control">
+                </div>
+                <div class="form-group">
+                    <input type="password" name="pswdtxt" id="pswdtxt" placeholder="Password" class="form-control">
+                </div>
+                <button type="submit" class="btn btn-block btn-primary">Log In</button>
+            </form>
+            <div class="mt-3">
+                <p class="text-muted">Don't you have an account? Clic <a href="{{url_for('register')}}" target="_blank">here</a> to sign up in Booknet</p>
+            </div>
+        </article>
+    </section>
+{%endblock%}
