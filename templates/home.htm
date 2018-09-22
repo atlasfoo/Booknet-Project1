@@ -14,6 +14,11 @@
                         <a href="{{url_for('comment', book_id=book.id)}}" class="btn btn-outline-info btn-sm btn-block">Comment</a>
                     </div>
                 </article>
+                {%else%}
+                <div class="alert alert-danger col-12">
+                    <h4 class="alert-heading text-center">Error 404</h4>
+                    <p class="text-center">The book was not found in Booknet's database</p>
+                </div>
             {%endfor%}
     </section>
 {%endblock%}

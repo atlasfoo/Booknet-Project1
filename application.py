@@ -27,6 +27,7 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
+    session["user_id"] = 0;
     return render_template("index.htm")
 
 @app.route("/home", methods=["POST"])
@@ -77,14 +78,19 @@ def comment(book_id):
 
 @app.route("/search", methods=["GET"])
 def search():
-    book_title=request.form.get("searchtxt")
-    books=db.execute("SELECT * FROM books WHERE title=:book_title",
+    book_title = request.args.get("searchtxt")
+    if book_title == None:
+        return render_template("error.htm", message="An internal error has ocurred")
+    books=db.execute("SELECT * FROM books WHERE LOWER(title)=LOWER(:book_title)",
     {"book_title": book_title}).fetchall()
+    if session["user_id"] == 0:
+        return render_template("error.htm", message="Please log in to use BookNet")
     user=db.execute("SELECT * FROM users WHERE id=:id",
     {"id":session["user_id"]}).fetchone()
+    
     return render_template("home.htm", samples=books, user=user, page_title="Search results:")
 
 @app.route("/logout")
 def logout():
-    session["user_id"]=None;
+    session["user_id"]=0;
     return render_template("index.htm")
