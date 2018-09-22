@@ -22,36 +22,48 @@
     <title>BookNet</title>
 </head>
 <body>
-    <div class="container-fluid">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-            <a href="#" class="navbar-brand">BookNet</a>
-            <button class="navbar-toggler navbar-toggler-left" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu" aria-label="Menu" aria-expanded="false">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <section class="collapse navbar-collapse" id="main-menu">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item">
-                       <a href="#" class="nav-link dropdown-toggle" id="user-dp" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-user"></i>{{user.usr}}</a>
-                       <div class="dropdown-menu" aria-labelledby="user-dp">
-                            <a href="#" class="dropdown-item">Profile</a>
-                            <a href="#" class="dropdown-item">Log Out</a>
-                       </div> 
-                    </li>
-                    <li class="nav item">
-                        <a href="#" class="nav-link">Home</a>
-                    </li>
-                    
-                </ul>
-                <form action="" class="form-inline" id="search-form">
-                    <input type="text" class="form-control mr-2" placeholder="Buscar Libro">
-                    <button type="submit" class="btn btn-sm btn-dark"><i class="icon-search"></i></button>
-                </form>
-            </section>
-        </nav>
-        <main class="mt-2">
-            {%block body%}
-            {%endblock%}
-        </main>
-    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <a href="#" class="navbar-brand">BookNet</a>
+        <button class="navbar-toggler navbar-toggler-left" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu"
+            aria-label="Menu" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <section class="collapse navbar-collapse" id="main-menu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a href="#" class="nav-link dropdown-toggle" id="user-dp" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false"><i class="icon-user"></i>{{user.usr}}</a>
+                    <div class="dropdown-menu" aria-labelledby="user-dp">
+                        <a href="#" class="dropdown-item">Profile</a>
+                        <a href="{{url_for('logout')}}" class="dropdown-item">Log Out</a>
+                    </div>
+                </li>
+                <li class="nav item">
+                    <a href="#" class="nav-link">Home</a>
+                </li>
+    
+            </ul>
+            <form action="{{url_for('search')}}" class="form-inline" id="search-form" method="GET">
+                <input type="text" class="form-control mr-2" placeholder="Buscar Libro" id="searchtxt" name="searchtxt">
+                <button type="submit" class="btn btn-sm btn-dark"><i class="icon-search"></i></button>
+            </form>
+        </section>
+    </nav>
+    <main class="container mt-2">
+        {%block body%}
+        {%endblock%}
+    </main>
+    <script>
+        document.addEventListener("DOMContentLoaded", ()=>{
+            document.querySelector("#search-form").onsubmit=()=>{
+                var search=document.querySelector("#searchtxt").value;
+                if(search === ""){
+                    alert("Fill the search field")
+                    return false;
+                }
+                return true;
+            }
+        })
+    </script>
 </body>
 </html>

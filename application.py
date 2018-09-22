@@ -42,8 +42,12 @@ def home():
     user=db.execute("SELECT * FROM users WHERE usr=:usr AND pswd=:pswd", {"usr":usr, "pswd":pswd}).fetchone()
     if user is None:
         return render_template("error.htm", message="Invalid username or password")
+    
+    #saving the session
     session["user_id"]=user.id;
-    return render_template("home.htm", user=user)
+    #some example books
+    samples=db.execute("SELECT * FROM books ORDER BY RANDOM() LIMIT 15").fetchall()
+    return render_template("home.htm", user=user, samples=samples, page_title="Recent Books")
 
 @app.route("/register")
 def register():
@@ -66,3 +70,21 @@ def registered():
 
     return render_template("success.htm", message="You're successfully registered")    
     
+@app.route("/comment/<int:book_id>")
+def comment(book_id):
+    return "Not implemented yet"
+
+
+@app.route("/search", methods=["GET"])
+def search():
+    book_title=request.form.get("searchtxt")
+    books=db.execute("SELECT * FROM books WHERE title=:book_title",
+    {"book_title": book_title}).fetchall()
+    user=db.execute("SELECT * FROM users WHERE id=:id",
+    {"id":session["user_id"]}).fetchone()
+    return render_template("home.htm", samples=books, user=user, page_title="Search results:")
+
+@app.route("/logout")
+def logout():
+    session["user_id"]=None;
+    return render_template("index.htm")

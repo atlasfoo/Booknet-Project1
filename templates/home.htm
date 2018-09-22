@@ -1,0 +1,19 @@
+{%extends "home-template.htm"%}
+{%block body%}
+    <section class="row mt-2" id="body">
+        <div class="col-12">
+            <h3 class="text-center">{{page_title}}</h3>
+        </div>
+            {%for book in samples%}
+                <article class="card col-lg-4 col-12">
+                    <div class="card-body">
+                        <h4 class="card-title">{{book.title}}</h4>
+                        <h6 class="card-subtitle text-muted mb-1">{{book.author}}</h6>
+                        <h6 class="card-subtitle text-muted mb-2">{{book.year}}</h6>
+                        <p class="card-text">ISBN: {{book.isbn}}</p>
+                        <a href="{{url_for('comment', book_id=book.id)}}" class="btn btn-outline-info btn-sm btn-block">Comment</a>
+                    </div>
+                </article>
+            {%endfor%}
+    </section>
+{%endblock%}
