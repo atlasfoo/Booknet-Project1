@@ -1,0 +1,64 @@
+{%extends "home-template.htm"%}
+{%block body%}
+    <section class="row mb-2 d-flex justify-content-center" id="book-cnt">
+        <article class="card col-lg-6 col-12">
+            <div class="card-body">
+                <h4 class="card-title">{{book.title}}</h4>
+                <h6 class="card-subtitle text-muted mb-2">{{book.author}}</h6>
+                <h6 class="card-subtitle text-muted mb-2">{{book.year}}</h6>
+                <p class="card-text">ISBN: {{book.isbn}}</p>
+            </div>
+        </article>
+    </section>
+    <section class="row mt-2 justify-content-center" id="rate">
+        <article class="card col-lg-6 col-12 bg-higlight text-info">
+            <div class="card-body">
+                <div class="card-title">Rating by users</div>
+                <div class="card-text">
+                    {% if avg_rate!=0 %}
+                        <p class="mb-2"><strong>Rating by BookNet users: </strong>{{avg_rate}}</p>
+                    {%endif%}
+                    <p class="mb-2"><strong>Rating by <a href="https://www.goodreads.com" target="_blank">Goodreads: </a></strong>{{gdr_rate.average_rating}}</p>
+                </div>
+            </div>
+        </article>
+    </section>
+    <section class="row mt-4 justify-content-center" id="comment-cnt">
+        <article class="col-lg-6 col-12">
+            <form action="{{url_for('commented')}}" method="post" class="d-flex justify-content-end flex-wrap" id="comment-form">
+                <textarea name="" id="" placeholder="Comentario" class="form-control"></textarea>
+                <div class="form-row w-100">
+                    <div class="col">
+                        <label for="starsrate" class="text-muted text-right" style="margin-right:5px;">Stars</label>
+                    </div>
+                    <div class="col-6 mr-2">
+                    <select class="custom-select" id="starsrate">
+                        <option selected value="-1">Vote...</option>
+                        <option value="1">&#9733;</option>
+                        <option value="2">&#9733;&#9733;</option>
+                        <option value="3">&#9733;&#9733;&#9733;</option>
+                        <option value="4">&#9733;&#9733;&#9733;&#9733;</option>
+                        <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                    </select>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-sm btn-primary " type="submit">Comentar</button>
+                    </div>
+                </div>               
+            </form>
+        </article>
+    </section>
+    <hr class="my-4 col-6">
+    
+    <section class="row mt-2" id="comments">
+
+    </section>
+    <style>
+        #comment-form textarea{
+            width: 100%;
+            min-height: 75px;
+            height: 125px;
+            margin-bottom: 20px; 
+        }
+    </style>
+{%endblock%}
