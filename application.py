@@ -89,9 +89,8 @@ def comment(book_id):
     user = db.execute("SELECT * FROM users WHERE id=:id",
     {"id": session["user_id"]}).fetchone()
     res = requests.get("https://www.goodreads.com/book/review_counts.json",
-                       params={"key": "dwdsoTU7TSH21w2VveT9Q", "isbns": book.isbn})
-    res=res.json()        
-    gdr_rate=res
+                       params={"key": "dwdsoTU7TSH21w2VveT9Q", "isbns": book.isbn})        
+    gdr_rate = (res.json()["books"][0]["average_rating"])
     return render_template("comment.htm", user=user, book=book, reviews=reviews, avg_rate=avg_rate, gdr_rate=gdr_rate)
 
 
