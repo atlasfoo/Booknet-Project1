@@ -10,6 +10,7 @@
             </div>
         </article>
     </section>
+
     <section class="row mt-2 justify-content-center" id="rate">
         <article class="card col-lg-6 col-12 bg-higlight text-info">
             <div class="card-body">
@@ -23,10 +24,11 @@
             </div>
         </article>
     </section>
+
     <section class="row mt-4 justify-content-center" id="comment-cnt">
         <article class="col-lg-6 col-12">
             <form action="{{url_for('commented')}}" method="post" class="d-flex justify-content-end flex-wrap" id="comment-form">
-                <textarea name="" id="" placeholder="Comentario" class="form-control"></textarea>
+                <textarea name="commtxt" id="commtxt" placeholder="Comentario" class="form-control"></textarea>
                 <div class="form-row w-100">
                     <div class="col">
                         <label for="starsrate" class="text-muted text-right" style="margin-right:5px;">Stars</label>
@@ -50,8 +52,21 @@
     </section>
     <hr class="my-4 col-6">
     
-    <section class="row mt-2" id="comments">
-
+    <section class="row mt-2 justify-content-center" id="comments">
+        <h3 class="col-12 text-center">User's reviews</h3>
+        {%for rev in reviews%}
+            <article class="comment col-lg-6 col-12">
+                <div class="media-body">
+                    <p class="name"><i class="icon-user"></i>{{rev.usr}}<span id="rating" class="text-muted">
+                        Rating: 
+                    {%for i in range(rev.rate)%}
+                        &#9733;
+                    {%endfor%} 
+                    </span></p>
+                    <p class="text-review">{{rev.comment}}</p>
+                </div>
+            </article>
+        {%endfor%}
     </section>
     <style>
         #comment-form textarea{
@@ -60,5 +75,36 @@
             height: 125px;
             margin-bottom: 20px; 
         }
+        .comment{
+            margin-top: 10px;
+            border-top: 1px solid #bfbfbf;
+        }
+        .comment .media-body{
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        .comment .media-body .name{
+            font-size:20px;
+            font-weight: 700;
+        }
+        .comment .media-body .name #rating{
+            font-size:14px;
+            font-weight: 400;
+            margin-left: 25px;
+            padding-left: 15px;
+        }
     </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", ()=>{
+            document.querySelector("#comment-form").onsubmit = () =>{
+                var commtxt=document.querySelector("#commtxt").value;
+                var starsrate=document.querySelector("#starsrate").value;
+                if(commtxt === "" || starsrate <= -1){
+                    alert("Please fill all fields");
+                    return false;
+                }
+                return true;
+            }
+        });
+    </script>
 {%endblock%}
