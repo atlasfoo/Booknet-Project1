@@ -114,6 +114,29 @@ def logout():
     session["user_id"]=0;
     return render_template("index.htm")
 
-@app.route("/commented")
-def commented():
-    return "Not implemented yet"
+@app.route("/commented/<int:book_id>", methods=["POST"])
+def commented(book_id):
+    #insert new comment
+    comm=request.form.get("commtxt")
+    rate=request.form.get("starsrate")
+    db.execute("INSERT INTO reviews(comment, rate, book_id, user_id) VALUES (:comm, :rate, :book_id, :user_id)",
+    {"comm": comm, "rate":rate, "book_id":book_id, "user_id": session["user_id"]})
+    db.commit()
+    #re-render page
+    book = db.execute("SELECT * FROM books WHERE id=:id",
+                      {"id": book_id}).fetchone()
+    if book is None:
+        return render_template("error.htm", message="No Book was found")
+    reviews = db.execute("SELECT comment, rate, usr FROM reviews JOIN users ON users.id=user_id WHERE book_id=:book_id LIMIT(4)",
+                         {"book_id": book_id}).fetchall()
+    avg_rate = 0
+    if len(reviews) != 0:
+        for rev in reviews:
+            avg_rate += rev.rate
+        avg_rate = avg_rate/len(reviews)
+    user = db.execute("SELECT * FROM users WHERE id=:id",
+                      {"id": session["user_id"]}).fetchone()
+    res = requests.get("https://www.goodreads.com/book/review_counts.json",
+                       params={"key": "dwdsoTU7TSH21w2VveT9Q", "isbns": book.isbn})
+    gdr_rate = (res.json()["books"][0]["average_rating"])
+    return render_template("comment.htm", user=user, book=book, reviews=reviews, avg_rate=avg_rate, gdr_rate=gdr_rate)

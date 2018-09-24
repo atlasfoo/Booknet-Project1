@@ -27,14 +27,14 @@
 
     <section class="row mt-4 justify-content-center" id="comment-cnt">
         <article class="col-lg-6 col-12">
-            <form action="{{url_for('commented')}}" method="post" class="d-flex justify-content-end flex-wrap" id="comment-form">
+            <form action="{{url_for('commented', book_id=book.id)}}" method="post" class="d-flex justify-content-end flex-wrap" id="comment-form">
                 <textarea name="commtxt" id="commtxt" placeholder="Comentario" class="form-control"></textarea>
                 <div class="form-row w-100">
                     <div class="col">
                         <label for="starsrate" class="text-muted text-right" style="margin-right:5px;">Stars</label>
                     </div>
                     <div class="col-6 mr-2">
-                    <select class="custom-select" id="starsrate">
+                    <select class="custom-select" id="starsrate" name="starsrate">
                         <option selected value="-1">Vote...</option>
                         <option value="1">&#9733;</option>
                         <option value="2">&#9733;&#9733;</option>
@@ -54,8 +54,9 @@
     
     <section class="row mt-2 justify-content-center" id="comments">
         <h3 class="col-12 text-center">User's reviews</h3>
+        <div class="col-lg-6 col-12">
         {%for rev in reviews%}
-            <article class="comment col-lg-6 col-12">
+            <article class="comment">
                 <div class="media-body">
                     <p class="name"><i class="icon-user"></i>{{rev.usr}}<span id="rating" class="text-muted">
                         Rating: 
@@ -66,7 +67,10 @@
                     <p class="text-review">{{rev.comment}}</p>
                 </div>
             </article>
+        {%else%}
+            <h2 class="text-info col-12 text-center"><i class="icon-thumbs-down mr-2"></i>No comments yet :(</h2>
         {%endfor%}
+        </div>
     </section>
     <style>
         #comment-form textarea{
