@@ -127,7 +127,7 @@ def commented(book_id):
                       {"id": book_id}).fetchone()
     if book is None:
         return render_template("error.htm", message="No Book was found")
-    reviews = db.execute("SELECT comment, rate, usr FROM reviews JOIN users ON users.id=user_id WHERE book_id=:book_id LIMIT(4)",
+    reviews = db.execute("SELECT rate FROM reviews JOIN users ON users.id=user_id WHERE book_id=:book_id LIMIT(4)",
                          {"book_id": book_id}).fetchall()
     avg_rate = 0
     if len(reviews) != 0:
@@ -140,3 +140,31 @@ def commented(book_id):
                        params={"key": "dwdsoTU7TSH21w2VveT9Q", "isbns": book.isbn})
     gdr_rate = (res.json()["books"][0]["average_rating"])
     return render_template("comment.htm", user=user, book=book, reviews=reviews, avg_rate=avg_rate, gdr_rate=gdr_rate)
+
+@app.route("/api/books/<int:book_id>")
+def book_api(book_id):
+    book = db.execute("SELECT * FROM books WHERE id=:id", {"id":book_id}).fetchone()
+    if book is None:
+        return jsonify({"Error 404": "This book does not exists"})
+    #getting reviews for average rate
+    reviews = db.execute("SELECT rate FROM reviews WHERE book_id=:book_id LIMIT(4)", {"book_id":book.id}).fetchall()
+    avg_rate = 0
+    #getting rate if exists
+    if len(reviews) != 0:
+        for rev in reviews:
+            avg_rate += rev.rate
+        avg_rate = avg_rate/len(reviews)
+    if avg_rate == 0:
+        return jsonify({
+            "ISBNS":book.isbn,
+            "Title": book.title,
+            "Author": book.author,
+            "Publication Year": book.year
+            })
+    return jsonify({
+        "ISBNS": book.isbn,
+        "Title": book.title,
+        "Author": book.author,
+        "Publication Year": book.year,
+        "Average users rating": avg_rate
+    })
