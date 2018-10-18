@@ -6,7 +6,7 @@ import requests
 
 import util
 
-from flask import Flask, session, render_template, request, jsonify
+from flask import Flask, session, render_template, request, jsonify, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -29,11 +29,10 @@ db = scoped_session(sessionmaker(bind=engine))
 
 @app.route("/")
 def index():
-    session["user_id"] = 0;
     return render_template("index.htm")
 
-@app.route("/home", methods=["POST"])
-def home():
+@app.route("/login", methods=["POST"])
+def login():
     '''getting into homepage'''
     #getting and verifying the form fields
     usr = request.form.get("nametxt")
@@ -47,17 +46,30 @@ def home():
         return render_template("error.htm", message="Invalid username or password")
     
     #saving the session
-    session["user_id"]=user.id;
-    #some example books
-    samples=db.execute("SELECT * FROM books ORDER BY RANDOM() LIMIT 15").fetchall()
-    return render_template("home.htm", user=user, samples=samples, page_title="Recent Books")
+    session["user_id"]=user.id
+    return redirect(url_for("home"))
 
-@app.route("/register")
-def register():
+@app.route("/home")
+def home():
+    #if the user is not logged in, will redirect to home
+    try:
+        session["user_id"]
+    except:
+        return redirect(url_for("index"))
+    """displaying home"""
+    #some example books
+    samples = db.execute(
+        "SELECT * FROM books ORDER BY RANDOM() LIMIT 15").fetchall()
+    user=db.execute("SELECT * FROM users WHERE id=:id", {"id":session["user_id"]}).fetchone()
+    return render_template("home.htm", samples=samples, user=user)        
+
+@app.route("/sign_up")
+def sign_up():
+    """displaying sign up form"""
     return render_template("register.htm")
 
-@app.route("/registered", methods=["POST"])
-def registered(): 
+@app.route("/register", methods=["POST"])
+def register(): 
     '''Putting new user into database'''
     #getting and verifying the form fields 
     usr=request.form.get("nametxt")
@@ -75,35 +87,50 @@ def registered():
     
 @app.route("/comment/<int:book_id>")
 def comment(book_id):
+    try:
+        session["user_id"]
+    except:
+        return redirect(url_for("index"))
+    """single book detail view"""
+    #getting the book
     book = db.execute("SELECT * FROM books WHERE id=:id",
     {"id": book_id}).fetchone()
     if book is None:
-        return render_template("error.htm", message="No Book was found")        
+        return render_template("error.htm", message="No Book was found")
+    #getting the last 4 reviews joining with the user name        
     reviews = db.execute("SELECT comment, rate, usr FROM reviews JOIN users ON users.id=user_id WHERE book_id=:book_id LIMIT(4)",
     {"book_id": book_id}).fetchall()
+    #getting the average stars rate
     avg_rate=0
     if len(reviews) !=0:
         for rev in reviews:
             avg_rate+=rev.rate
         avg_rate=avg_rate/len(reviews)
+    #getting the user for session view
     user = db.execute("SELECT * FROM users WHERE id=:id",
     {"id": session["user_id"]}).fetchone()
+    #getting info from goodreads api, only the average rating
     res = requests.get("https://www.goodreads.com/book/review_counts.json",
                        params={"key": "dwdsoTU7TSH21w2VveT9Q", "isbns": book.isbn})        
     gdr_rate = (res.json()["books"][0]["average_rating"])
+    #return
     return render_template("comment.htm", user=user, book=book, reviews=reviews, avg_rate=avg_rate, gdr_rate=gdr_rate)
 
 
 @app.route("/search", methods=["GET"])
 def search():
+    try:
+        session["user_id"]
+    except:
+        return redirect(url_for("index"))
+    """I've decided to reuse the home template for searching tasks, limiting the list only to the searched ones"""
     book_title = request.args.get("searchtxt")
-
     if book_title == None:
         return render_template("error.htm", message="An internal error has ocurred")
+    #looking for the books, uncase sensitive
     books=db.execute("SELECT * FROM books WHERE LOWER(title)=LOWER(:book_title)",
     {"book_title": book_title}).fetchall()
-    if session["user_id"] == 0:
-        return render_template("error.htm", message="Please log in to use BookNet")
+    #getting the user for session display
     user=db.execute("SELECT * FROM users WHERE id=:id",
     {"id":session["user_id"]}).fetchone()
     
@@ -111,7 +138,9 @@ def search():
 
 @app.route("/logout")
 def logout():
-    session["user_id"]=0;
+    #deleting the session key for logout
+    if "user_id" in session:
+        del session["user_id"]
     return render_template("index.htm")
 
 @app.route("/commented/<int:book_id>", methods=["POST"])
@@ -122,27 +151,11 @@ def commented(book_id):
     db.execute("INSERT INTO reviews(comment, rate, book_id, user_id) VALUES (:comm, :rate, :book_id, :user_id)",
     {"comm": comm, "rate":rate, "book_id":book_id, "user_id": session["user_id"]})
     db.commit()
-    #re-render page
-    book = db.execute("SELECT * FROM books WHERE id=:id",
-                      {"id": book_id}).fetchone()
-    if book is None:
-        return render_template("error.htm", message="No Book was found")
-    reviews = db.execute("SELECT rate FROM reviews JOIN users ON users.id=user_id WHERE book_id=:book_id LIMIT(4)",
-                         {"book_id": book_id}).fetchall()
-    avg_rate = 0
-    if len(reviews) != 0:
-        for rev in reviews:
-            avg_rate += rev.rate
-        avg_rate = avg_rate/len(reviews)
-    user = db.execute("SELECT * FROM users WHERE id=:id",
-                      {"id": session["user_id"]}).fetchone()
-    res = requests.get("https://www.goodreads.com/book/review_counts.json",
-                       params={"key": "dwdsoTU7TSH21w2VveT9Q", "isbns": book.isbn})
-    gdr_rate = (res.json()["books"][0]["average_rating"])
-    return render_template("comment.htm", user=user, book=book, reviews=reviews, avg_rate=avg_rate, gdr_rate=gdr_rate)
+    return redirect(url_for("comment", book_id=book_id))
 
 @app.route("/api/books/<int:book_id>")
 def book_api(book_id):
+    #getting the book
     book = db.execute("SELECT * FROM books WHERE id=:id", {"id":book_id}).fetchone()
     if book is None:
         return jsonify({"Error 404": "This book does not exists"})
@@ -154,6 +167,7 @@ def book_api(book_id):
         for rev in reviews:
             avg_rate += rev.rate
         avg_rate = avg_rate/len(reviews)
+    #if rate is not avaliable will return a JSON without rate
     if avg_rate == 0:
         return jsonify({
             "ISBNS":book.isbn,

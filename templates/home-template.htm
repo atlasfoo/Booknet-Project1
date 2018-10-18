@@ -34,17 +34,16 @@
                     <a href="#" class="nav-link dropdown-toggle" id="user-dp" data-toggle="dropdown" aria-haspopup="true"
                         aria-expanded="false"><i class="icon-user"></i>{{user.usr}}</a>
                     <div class="dropdown-menu" aria-labelledby="user-dp">
-                        <a href="#" class="dropdown-item">Profile</a>
                         <a href="{{url_for('logout')}}" class="dropdown-item">Log Out</a>
                     </div>
                 </li>
                 <li class="nav item">
-                    <a href="#" class="nav-link">Home</a>
+                    <a href="{{url_for('home')}}" class="nav-link">Home</a>
                 </li>
     
             </ul>
             <form action="{{url_for('search')}}" class="form-inline" id="search-form" method="GET">
-                <input type="text" class="form-control mr-2" placeholder="Buscar Libro" id="searchtxt" name="searchtxt">
+                <input type="text" class="form-control mr-2" placeholder="Search Book" id="searchtxt" name="searchtxt">
                 <button type="submit" class="btn btn-sm btn-dark"><i class="icon-search"></i></button>
             </form>
         </section>

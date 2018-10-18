@@ -28,7 +28,7 @@
     <section class="row mt-4 justify-content-center" id="comment-cnt">
         <article class="col-lg-6 col-12">
             <form action="{{url_for('commented', book_id=book.id)}}" method="post" class="d-flex justify-content-end flex-wrap" id="comment-form">
-                <textarea name="commtxt" id="commtxt" placeholder="Comentario" class="form-control"></textarea>
+                <textarea name="commtxt" id="commtxt" placeholder="Review" class="form-control"></textarea>
                 <div class="form-row w-100">
                     <div class="col">
                         <label for="starsrate" class="text-muted text-right" style="margin-right:5px;">Stars</label>
@@ -44,7 +44,7 @@
                     </select>
                     </div>
                     <div class="col">
-                        <button class="btn btn-sm btn-primary " type="submit">Comentar</button>
+                        <button class="btn btn-sm btn-primary " type="submit">Comment</button>
                     </div>
                 </div>               
             </form>
