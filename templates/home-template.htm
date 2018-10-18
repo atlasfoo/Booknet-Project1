@@ -23,7 +23,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <a href="#" class="navbar-brand">BookNet</a>
+        <a href="{{url_for('home')}}" class="navbar-brand">BookNet</a>
         <button class="navbar-toggler navbar-toggler-left" data-toggle="collapse" data-target="#main-menu" aria-controls="main-menu"
             aria-label="Menu" aria-expanded="false">
             <span class="navbar-toggler-icon"></span>
@@ -36,9 +36,6 @@
                     <div class="dropdown-menu" aria-labelledby="user-dp">
                         <a href="{{url_for('logout')}}" class="dropdown-item">Log Out</a>
                     </div>
-                </li>
-                <li class="nav item">
-                    <a href="{{url_for('home')}}" class="nav-link">Home</a>
                 </li>
     
             </ul>
