@@ -74,7 +74,8 @@
 *.patch    -text
 
 # Linguist
-*/templates/ linguist-vendored
+* linguist-vendored
+*.py linguist-vendored=false
 
 #
 # Exclude files from exporting
